@@ -23,11 +23,17 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
   isLast
 }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [cloudPositions, setCloudPositions] = useState([
-    { left: '-20%' },
-    { left: '40%' },
-    { left: '100%' }
-  ]);
+  const [movingRight, setMovingRight] = useState(true);
+  
+  // Generate random number of clouds (2-4) and positions for this specific card
+  const [cloudPositions] = useState(() => {
+    const numClouds = Math.floor(Math.random() * 3) + 2; // 2-4 clouds
+    return Array(numClouds).fill(null).map(() => ({
+      left: `${Math.random() * 120 - 20}%`,
+      top: `${Math.random() * 40 + 20}%`,
+      speed: (Math.random() * 0.02) + 0.01 // Random speed between 0.01 and 0.03
+    }));
+  });
   
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,23 +41,27 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     }, 1000);
 
     const cloudTimer = setInterval(() => {
-      setCloudPositions(clouds => 
-        clouds.map(cloud => ({
-          left: `${parseFloat(cloud.left) - 0.5}%`
-        })).map(cloud => ({
-          left: parseFloat(cloud.left) < -20 ? '120%' : cloud.left
-        }))
-      );
-    }, 50);
+      setMovingRight(prev => {
+        const firstCloud = cloudPositions[0].left;
+        if (parseFloat(firstCloud) < -20) return false;
+        if (parseFloat(firstCloud) > 120) return true;
+        return prev;
+      });
+    }, 1000);
 
     return () => {
       clearInterval(timer);
       clearInterval(cloudTimer);
     };
-  }, []);
+  }, [cloudPositions]);
 
   const getTimeInZone = () => {
-    return currentTime.toLocaleTimeString('en-US', { timeZone, hour12: false });
+    return currentTime.toLocaleTimeString('en-US', { 
+      timeZone, 
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true 
+    });
   };
 
   const getDateInZone = () => {
@@ -87,11 +97,11 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     const minutes = parseInt(getTimeInZone().split(':')[1]);
     const time = hours + minutes / 60;
 
-    if (time < 6) return 'bg-gradient-to-r from-[#243949] to-[#517fa4]';
+    if (time < 6) return 'bg-gradient-to-r from-[#1a237e] to-[#4a148c]';
     if (time < 8) return 'bg-gradient-to-r from-[#F97316] to-[#FEC6A1]';
-    if (time < 16) return 'bg-gradient-to-r from-[#D3E4FD] to-[#F2FCE2]';
+    if (time < 16) return 'bg-gradient-to-r from-[#4FC3F7] to-[#81C784]';
     if (time < 18) return 'bg-gradient-to-r from-[#FEC6A1] to-[#F97316]';
-    return 'bg-gradient-to-r from-[#243949] to-[#517fa4]';
+    return 'bg-gradient-to-r from-[#1a237e] to-[#4a148c]';
   };
 
   const getProgressBarColor = () => {
@@ -99,28 +109,36 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     const minutes = parseInt(getTimeInZone().split(':')[1]);
     const time = hours + minutes / 60;
 
-    if (time < 6) return 'bg-[#517fa4]';
+    if (time < 6) return 'bg-[#4a148c]';
     if (time < 8) return 'bg-[#F97316]';
-    if (time < 16) return 'bg-[#D3E4FD]';
+    if (time < 16) return 'bg-[#81C784]';
     if (time < 18) return 'bg-[#F97316]';
-    return 'bg-[#517fa4]';
+    return 'bg-[#4a148c]';
   };
 
   return (
     <div className="w-full max-w-xs bg-white">
       <div className={`relative w-full aspect-square ${getDayGradient()} overflow-hidden`}>
-        {cloudPositions.map((pos, i) => (
-          <div
-            key={i}
-            className="absolute transition-all duration-50 opacity-50"
-            style={{
-              left: pos.left,
-              top: `${20 + i * 20}%`,
-            }}
-          >
-            <Cloud className="w-16 h-16 text-white fill-white" />
-          </div>
-        ))}
+        {cloudPositions.map((cloud, i) => {
+          const newLeft = movingRight 
+            ? `${parseFloat(cloud.left) - cloud.speed}%`
+            : `${parseFloat(cloud.left) + cloud.speed}%`;
+          
+          cloud.left = newLeft;
+          
+          return (
+            <div
+              key={i}
+              className="absolute transition-all duration-1000 opacity-50"
+              style={{
+                left: cloud.left,
+                top: cloud.top,
+              }}
+            >
+              <Cloud className="w-16 h-16 text-white fill-white" />
+            </div>
+          );
+        })}
         <div 
           className="absolute transform -translate-x-1/2"
           style={{

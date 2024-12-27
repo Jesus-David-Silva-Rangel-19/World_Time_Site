@@ -41,8 +41,7 @@ const Index = () => {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-medium text-center mb-1">windows to the world</h1>
-        <p className="text-sm text-gray-600 text-center mb-8">made by @pau_wee_</p>
+        <h1 className="text-2xl font-medium text-center mb-8">WORLD TIME WINDOWS</h1>
         
         <TimeZoneSearch onAddLocation={handleAddLocation} />
         
