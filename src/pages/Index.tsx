@@ -39,7 +39,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 pt-12">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-medium text-center mb-1">WORLD TIME WINDOWS</h1>
         <p className="text-sm text-gray-600 text-center mb-8">made by @pau_wee_</p>
