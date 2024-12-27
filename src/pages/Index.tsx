@@ -15,7 +15,6 @@ const Index = () => {
   ]);
 
   const handleAddLocation = (location: string) => {
-    // In a real app, we would validate and lookup the timezone
     setLocations([...locations, { name: location, timeZone: 'UTC' }]);
   };
 
@@ -42,7 +41,8 @@ const Index = () => {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">World Time</h1>
+        <h1 className="text-2xl font-medium text-center mb-1">windows to the world</h1>
+        <p className="text-sm text-gray-600 text-center mb-8">made by @pau_wee_</p>
         
         <TimeZoneSearch onAddLocation={handleAddLocation} />
         

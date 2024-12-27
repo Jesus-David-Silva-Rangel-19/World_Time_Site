@@ -24,9 +24,9 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
 }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [cloudPositions, setCloudPositions] = useState([
-    { left: '20%', top: '30%' },
-    { left: '60%', top: '40%' },
-    { left: '40%', top: '60%' }
+    { left: '-20%' },
+    { left: '40%' },
+    { left: '100%' }
   ]);
   
   useEffect(() => {
@@ -37,11 +37,12 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     const cloudTimer = setInterval(() => {
       setCloudPositions(clouds => 
         clouds.map(cloud => ({
-          left: `${Math.random() * 80 + 10}%`,
-          top: `${Math.random() * 60 + 20}%`
+          left: `${parseFloat(cloud.left) - 0.5}%`
+        })).map(cloud => ({
+          left: parseFloat(cloud.left) < -20 ? '120%' : cloud.left
         }))
       );
-    }, 10000);
+    }, 50);
 
     return () => {
       clearInterval(timer);
@@ -93,19 +94,31 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     return 'bg-gradient-to-r from-[#243949] to-[#517fa4]';
   };
 
+  const getProgressBarColor = () => {
+    const hours = parseInt(getTimeInZone().split(':')[0]);
+    const minutes = parseInt(getTimeInZone().split(':')[1]);
+    const time = hours + minutes / 60;
+
+    if (time < 6) return 'bg-[#517fa4]';
+    if (time < 8) return 'bg-[#F97316]';
+    if (time < 16) return 'bg-[#D3E4FD]';
+    if (time < 18) return 'bg-[#F97316]';
+    return 'bg-[#517fa4]';
+  };
+
   return (
     <div className="w-full max-w-xs bg-white">
-      <div className={`relative w-full aspect-square ${getDayGradient()}`}>
+      <div className={`relative w-full aspect-square ${getDayGradient()} overflow-hidden`}>
         {cloudPositions.map((pos, i) => (
           <div
             key={i}
-            className="absolute transition-all duration-[10000ms] opacity-50"
+            className="absolute transition-all duration-50 opacity-50"
             style={{
               left: pos.left,
-              top: pos.top,
+              top: `${20 + i * 20}%`,
             }}
           >
-            <Cloud className="w-8 h-8 text-white fill-white" />
+            <Cloud className="w-16 h-16 text-white fill-white" />
           </div>
         ))}
         <div 
@@ -116,9 +129,9 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
           }}
         >
           {isNightTime() ? (
-            <Moon className="w-8 h-8 text-white fill-white" />
+            <Moon className="w-12 h-12 text-white fill-white" />
           ) : (
-            <Sun className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+            <Sun className="w-12 h-12 text-yellow-500 fill-yellow-500" />
           )}
         </div>
       </div>
@@ -165,7 +178,7 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
         
         <div className="w-full h-1 bg-gray-100">
           <div 
-            className="h-full bg-blue-500 transition-all duration-1000"
+            className={`h-full transition-all duration-1000 ${getProgressBarColor()}`}
             style={{ width: `${getDayProgress()}%` }}
           />
         </div>
