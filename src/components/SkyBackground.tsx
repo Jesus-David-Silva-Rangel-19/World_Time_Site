@@ -12,7 +12,7 @@ const SkyBackground: React.FC<SkyBackgroundProps> = ({ timeString }) => {
     return Array(numClouds).fill(null).map(() => ({
       left: `${Math.random() * 120 - 20}%`,
       top: `${Math.random() * 40 + 20}%`,
-      speed: (Math.random() * 0.02) + 0.01
+      speed: (Math.random() * 0.01) + 0.005 // Reduced speed for smoother movement
     }));
   });
 
@@ -32,7 +32,7 @@ const SkyBackground: React.FC<SkyBackgroundProps> = ({ timeString }) => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(updateCloudPositions, 50);
+    const interval = setInterval(updateCloudPositions, 16); // Increased animation frame rate for smoothness
     return () => clearInterval(interval);
   }, [updateCloudPositions]);
 
@@ -41,7 +41,7 @@ const SkyBackground: React.FC<SkyBackgroundProps> = ({ timeString }) => {
       {cloudPositions.map((cloud, i) => (
         <div
           key={i}
-          className="absolute transition-all duration-1000 opacity-50"
+          className="absolute transition-all duration-[2000ms] ease-linear opacity-50"
           style={{
             left: cloud.left,
             top: cloud.top,
