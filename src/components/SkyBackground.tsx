@@ -6,33 +6,50 @@ interface SkyBackgroundProps {
   timeString: string;
 }
 
+interface CloudPosition {
+  left: number;  // Changed from string to number for easier calculations
+  top: number;   // Changed from string to number
+  speed: number;
+  direction: number; // 1 for right, -1 for left
+}
+
 const SkyBackground: React.FC<SkyBackgroundProps> = ({ timeString }) => {
-  const [cloudPositions, setCloudPositions] = useState(() => {
+  const [cloudPositions, setCloudPositions] = useState<CloudPosition[]>(() => {
     const numClouds = Math.floor(Math.random() * 3) + 2; // 2-4 clouds
     return Array(numClouds).fill(null).map(() => ({
-      left: `${Math.random() * 120 - 20}%`,
-      top: `${Math.random() * 40 + 20}%`,
-      speed: (Math.random() * 0.01) + 0.005 // Reduced speed for smoother movement
+      left: Math.random() * 100,  // Position as number
+      top: Math.random() * 40 + 20, // Position as number
+      speed: (Math.random() * 0.05) + 0.02,
+      direction: -1 // Start moving left
     }));
   });
 
   const updateCloudPositions = useCallback(() => {
     setCloudPositions(prevPositions => 
       prevPositions.map(cloud => {
-        const currentLeft = parseFloat(cloud.left);
-        if (currentLeft < -20) {
-          return { ...cloud, left: '120%' };
+        let newLeft = cloud.left + (cloud.speed * cloud.direction);
+        let newDirection = cloud.direction;
+
+        // Bounce at edges
+        if (newLeft <= -20) {
+          newLeft = -20;
+          newDirection = 1;  // Change direction to right
+        } else if (newLeft >= 120) {
+          newLeft = 120;
+          newDirection = -1; // Change direction to left
         }
-        return { 
-          ...cloud, 
-          left: `${currentLeft - cloud.speed}%`
+
+        return {
+          ...cloud,
+          left: newLeft,
+          direction: newDirection
         };
       })
     );
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(updateCloudPositions, 16); // Increased animation frame rate for smoothness
+    const interval = setInterval(updateCloudPositions, 16); // 60fps for smooth animation
     return () => clearInterval(interval);
   }, [updateCloudPositions]);
 
@@ -41,10 +58,10 @@ const SkyBackground: React.FC<SkyBackgroundProps> = ({ timeString }) => {
       {cloudPositions.map((cloud, i) => (
         <div
           key={i}
-          className="absolute transition-all duration-[2000ms] ease-linear opacity-50"
+          className="absolute transition-all duration-[3000ms] ease-linear opacity-50"
           style={{
-            left: cloud.left,
-            top: cloud.top,
+            left: `${cloud.left}%`,
+            top: `${cloud.top}%`,
           }}
         >
           <Cloud className="w-16 h-16 text-white fill-white" />
