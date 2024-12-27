@@ -12,7 +12,7 @@ const Index = () => {
     { name: 'New York', timeZone: 'America/New_York' },
     { name: 'London', timeZone: 'Europe/London' },
     { name: 'Tokyo', timeZone: 'Asia/Tokyo' },
-    { name: 'California', timeZone: 'America/Los_Angeles' }
+    { name: 'New Zealand', timeZone: 'Pacific/Auckland' }
   ]);
 
   const handleAddLocation = (location: string) => {
