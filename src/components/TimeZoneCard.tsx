@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { Sun, Moon, Trash, ArrowUp, ArrowDown } from 'lucide-react';
+import { Sun, Cloud, Moon, Trash, ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface TimeZoneCardProps {
@@ -23,12 +23,30 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
   isLast
 }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [cloudPositions, setCloudPositions] = useState([
+    { left: '20%', top: '30%' },
+    { left: '60%', top: '40%' },
+    { left: '40%', top: '60%' }
+  ]);
   
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-    return () => clearInterval(timer);
+
+    const cloudTimer = setInterval(() => {
+      setCloudPositions(clouds => 
+        clouds.map(cloud => ({
+          left: `${Math.random() * 80 + 10}%`,
+          top: `${Math.random() * 60 + 20}%`
+        }))
+      );
+    }, 10000);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(cloudTimer);
+    };
   }, []);
 
   const getTimeInZone = () => {
@@ -63,13 +81,33 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     return `${Math.min(Math.max(percentage, 10), 90)}%`;
   };
 
+  const getDayGradient = () => {
+    const hours = parseInt(getTimeInZone().split(':')[0]);
+    const minutes = parseInt(getTimeInZone().split(':')[1]);
+    const time = hours + minutes / 60;
+
+    if (time < 6) return 'bg-gradient-to-r from-[#243949] to-[#517fa4]';
+    if (time < 8) return 'bg-gradient-to-r from-[#F97316] to-[#FEC6A1]';
+    if (time < 16) return 'bg-gradient-to-r from-[#D3E4FD] to-[#F2FCE2]';
+    if (time < 18) return 'bg-gradient-to-r from-[#FEC6A1] to-[#F97316]';
+    return 'bg-gradient-to-r from-[#243949] to-[#517fa4]';
+  };
+
   return (
-    <div className="w-full max-w-xs bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className={`relative w-full aspect-square ${
-        isNightTime() 
-          ? 'bg-gradient-to-r from-[#243949] to-[#517fa4]' 
-          : 'bg-gradient-to-r from-[#dfeaf7] to-[#f4f8fc]'
-      }`}>
+    <div className="w-full max-w-xs bg-white">
+      <div className={`relative w-full aspect-square ${getDayGradient()}`}>
+        {cloudPositions.map((pos, i) => (
+          <div
+            key={i}
+            className="absolute transition-all duration-[10000ms] opacity-50"
+            style={{
+              left: pos.left,
+              top: pos.top,
+            }}
+          >
+            <Cloud className="w-8 h-8 text-white fill-white" />
+          </div>
+        ))}
         <div 
           className="absolute transform -translate-x-1/2"
           style={{
@@ -78,9 +116,9 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
           }}
         >
           {isNightTime() ? (
-            <Moon className="w-6 h-6 text-white" />
+            <Moon className="w-8 h-8 text-white fill-white" />
           ) : (
-            <Sun className="w-6 h-6 text-yellow-500" />
+            <Sun className="w-8 h-8 text-yellow-500 fill-yellow-500" />
           )}
         </div>
       </div>
@@ -89,7 +127,7 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-medium">{getTimeInZone()}</h2>
-            <div className="text-lg text-warmblack">{location}</div>
+            <div className="text-lg text-warmblack uppercase">{location}</div>
           </div>
           <div className="flex gap-1">
             {!isFirst && (
@@ -125,9 +163,9 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
 
         <div className="text-sm text-gray-600">{getDateInZone()}</div>
         
-        <div className="w-full h-1 bg-gray-100 rounded-full">
+        <div className="w-full h-1 bg-gray-100">
           <div 
-            className="h-full bg-blue-500 rounded-full transition-all duration-1000"
+            className="h-full bg-blue-500 transition-all duration-1000"
             style={{ width: `${getDayProgress()}%` }}
           />
         </div>
