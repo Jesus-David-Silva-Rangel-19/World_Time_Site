@@ -25,7 +25,6 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
   const [currentTime, setCurrentTime] = useState(new Date());
   const [movingRight, setMovingRight] = useState(true);
   
-  // Generate random number of clouds (2-4) and positions for this specific card
   const [cloudPositions] = useState(() => {
     const numClouds = Math.floor(Math.random() * 3) + 2; // 2-4 clouds
     return Array(numClouds).fill(null).map(() => ({
@@ -98,11 +97,11 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
     const minutes = parseInt(getTimeInZone().split(':')[1]);
     const time = hours + minutes / 60;
 
-    if (time < 6) return 'bg-gradient-to-r from-[#1a237e] to-[#4a148c]';
-    if (time < 8) return 'bg-gradient-to-r from-[#F97316] to-[#FEC6A1]';
-    if (time < 16) return 'bg-gradient-to-r from-[#4FC3F7] to-[#81C784]';
-    if (time < 18) return 'bg-gradient-to-r from-[#FEC6A1] to-[#F97316]';
-    return 'bg-gradient-to-r from-[#1a237e] to-[#4a148c]';
+    if (time < 6) return 'bg-gradient-to-r from-[#1a237e] to-[#4a148c]'; // Night
+    if (time < 8) return 'bg-gradient-to-r from-[#F97316] to-[#FEF7CD]'; // Sunrise
+    if (time < 16) return 'bg-gradient-to-r from-[#4FC3F7] to-[#81C784]'; // Day
+    if (time < 18) return 'bg-gradient-to-r from-[#FEF7CD] to-[#F97316]'; // Sunset
+    return 'bg-gradient-to-r from-[#1a237e] to-[#4a148c]'; // Night
   };
 
   const getProgressBarColor = () => {
@@ -150,7 +149,7 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
           {isNightTime() ? (
             <Moon className="w-12 h-12 text-white fill-white" />
           ) : (
-            <Sun className="w-12 h-12 text-yellow-500 fill-yellow-500" />
+            <Sun className="w-12 h-12 text-yellow-300 fill-yellow-300" />
           )}
         </div>
       </div>
