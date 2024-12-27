@@ -60,6 +60,7 @@ const TimeZoneCard: React.FC<TimeZoneCardProps> = ({
       timeZone, 
       hour: 'numeric',
       minute: 'numeric',
+      second: 'numeric',
       hour12: true 
     });
   };
