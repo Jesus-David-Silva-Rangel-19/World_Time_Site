@@ -67,7 +67,7 @@ const TimeZoneSearch: React.FC<TimeZoneSearchProps> = ({ onAddLocation }) => {
             className="font-mono"
           />
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0" align="start">
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-white" align="start">
           <Command>
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
