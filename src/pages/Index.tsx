@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TimeZoneSearch from '../components/TimeZoneSearch';
 import TimeZoneCard from '../components/TimeZoneCard';
+import { TIMEZONE_SUGGESTIONS } from '../data/timezones';
 
 interface Location {
   name: string;
@@ -25,7 +26,13 @@ const Index = () => {
   }, []);
 
   const handleAddLocation = (location: string) => {
-    setLocations([...locations, { name: location, timeZone: 'UTC' }]);
+    const cityData = TIMEZONE_SUGGESTIONS.find(item => item.city === location);
+    if (cityData) {
+      setLocations([...locations, { 
+        name: location, 
+        timeZone: cityData.timezone 
+      }]);
+    }
   };
 
   const handleDeleteLocation = (index: number) => {
