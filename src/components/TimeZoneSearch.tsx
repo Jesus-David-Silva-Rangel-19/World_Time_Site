@@ -120,16 +120,31 @@ const TimeZoneSearch: React.FC<TimeZoneSearchProps> = ({ onAddLocation }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [suggestions, setSuggestions] = useState(TIMEZONE_SUGGESTIONS);
+  const [alternativeSuggestions, setAlternativeSuggestions] = useState<typeof TIMEZONE_SUGGESTIONS>([]);
 
   useEffect(() => {
     if (search) {
-      const filtered = TIMEZONE_SUGGESTIONS.filter(item =>
+      const exactMatches = TIMEZONE_SUGGESTIONS.filter(item =>
         item.city.toLowerCase().includes(search.toLowerCase()) ||
         item.timezone.toLowerCase().includes(search.toLowerCase())
       );
-      setSuggestions(filtered);
+
+      // If no exact matches, find alternative suggestions
+      if (exactMatches.length === 0) {
+        // Get cities that start with the same first letter
+        const firstLetter = search[0].toLowerCase();
+        const alternatives = TIMEZONE_SUGGESTIONS
+          .filter(item => item.city.toLowerCase().startsWith(firstLetter))
+          .slice(0, 5); // Limit to 5 suggestions
+        setAlternativeSuggestions(alternatives);
+      } else {
+        setAlternativeSuggestions([]);
+      }
+
+      setSuggestions(exactMatches);
     } else {
       setSuggestions(TIMEZONE_SUGGESTIONS);
+      setAlternativeSuggestions([]);
     }
   }, [search]);
 
@@ -154,7 +169,27 @@ const TimeZoneSearch: React.FC<TimeZoneSearchProps> = ({ onAddLocation }) => {
         <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 bg-white" align="start">
           <Command>
             <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandEmpty>
+                <div className="py-6 text-center">
+                  <p className="text-sm text-gray-500">No exact matches found.</p>
+                  {alternativeSuggestions.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium text-gray-700">You might be interested in:</p>
+                      <div className="mt-2 flex flex-wrap gap-2 justify-center">
+                        {alternativeSuggestions.map((item) => (
+                          <button
+                            key={item.city}
+                            onClick={() => handleSelect(item.city)}
+                            className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                          >
+                            {item.city}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CommandEmpty>
               <CommandGroup>
                 {suggestions.map((item) => (
                   <CommandItem
