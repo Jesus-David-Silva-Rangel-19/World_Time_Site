@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import SkyBackground from './SkyBackground';
 import TimeDisplay from './TimeDisplay';
 import { 
@@ -10,6 +10,7 @@ import {
 interface TimeZoneCardProps {
   location: string;
   timeZone: string;
+  currentTime: Date;
   onDelete: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
@@ -20,22 +21,13 @@ interface TimeZoneCardProps {
 const TimeZoneCard: React.FC<TimeZoneCardProps> = ({ 
   location, 
   timeZone,
+  currentTime,
   onDelete,
   onMoveUp,
   onMoveDown,
   isFirst,
   isLast
 }) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
   const timeString = getTimeInZone(currentTime, timeZone);
   const dateString = getDateInZone(currentTime, timeZone);
   const progress = getDayProgress(timeString);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TimeZoneSearch from '../components/TimeZoneSearch';
 import TimeZoneCard from '../components/TimeZoneCard';
 
@@ -14,6 +14,15 @@ const Index = () => {
     { name: 'Tokyo', timeZone: 'Asia/Tokyo' },
     { name: 'New Zealand', timeZone: 'Pacific/Auckland' }
   ]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleAddLocation = (location: string) => {
     setLocations([...locations, { name: location, timeZone: 'UTC' }]);
@@ -53,6 +62,7 @@ const Index = () => {
               key={`${location.name}-${index}`}
               location={location.name}
               timeZone={location.timeZone}
+              currentTime={currentTime}
               onDelete={() => handleDeleteLocation(index)}
               onMoveUp={() => handleMoveUp(index)}
               onMoveDown={() => handleMoveDown(index)}
