@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import TimeZoneSearch from '../components/TimeZoneSearch';
 import TimeZoneCard from '../components/TimeZoneCard';
 import { TIMEZONE_SUGGESTIONS } from '../data/timezones';
+import { CheckCircle } from 'lucide-react';
 
 interface Location {
   name: string;
@@ -10,10 +12,10 @@ interface Location {
 
 const Index = () => {
   const [locations, setLocations] = useState<Location[]>([
-    { name: 'New York', timeZone: 'America/New_York' },
-    { name: 'London', timeZone: 'Europe/London' },
-    { name: 'Tokyo', timeZone: 'Asia/Tokyo' },
-    { name: 'New Zealand', timeZone: 'Pacific/Auckland' }
+    { name: 'Nueva York', timeZone: 'America/New_York' },
+    { name: 'Londres', timeZone: 'Europe/London' },
+    { name: 'Tokio', timeZone: 'Asia/Tokyo' },
+    { name: 'Nueva Zelanda', timeZone: 'Pacific/Auckland' }
   ]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -58,8 +60,19 @@ const Index = () => {
   return (
     <div className="min-h-screen p-8 pt-12">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-medium text-center mb-1">WORLD TIME WINDOWS</h1>
-        <p className="text-sm text-gray-600 text-center mb-8">made by <a href="https://x.com/pau_wee_" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">@pau_wee_</a></p>
+        <h1 className="text-2xl font-medium text-center mb-1">VENTANAS DE TIEMPO MUNDIAL</h1>
+        <p className="text-sm text-gray-600 text-center mb-8">
+          hecho por{" "}
+          <a 
+            href="https://x.com/pau_wee_" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-gray-900 inline-flex items-center gap-1"
+          >
+            Jesús David Silva Rangel
+            <CheckCircle className="w-4 h-4 text-green-500" />
+          </a>
+        </p>
         
         <TimeZoneSearch onAddLocation={handleAddLocation} />
         
